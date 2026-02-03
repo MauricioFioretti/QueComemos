@@ -1,0 +1,773 @@
+:root{
+  --bg:#0f0f0f;
+  --surface:#212121;
+  --surface2:#181818;
+  --border:#3d3d3d;
+  --text:#ffffff;
+  --muted:#aaaaaa;
+  --accent:#3ea6ff;
+  --ok:#2ea043;
+  --warn:#d29922;
+  --err:#ff3b3b;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  padding:18px;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+
+.top{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  margin-bottom:14px;
+}
+
+/* ===== TOP ACTIONS (fila superior + botón principal) ===== */
+.top-actions{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+
+  /* ✅ CLAVE: en un contenedor flex-wrap (roombar),
+     esto fuerza a que top-actions tome toda la fila */
+  width:100%;
+  flex: 1 1 100%;
+}
+
+.top-actions-row{
+  display:grid;
+  gap:10px;
+
+  /* ✅ que todo estire parejo */
+  align-items:stretch;
+  justify-items:stretch;
+  width:100%;
+
+  /* ✅ clave para que no se “achiquen raro” en grids */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-areas: "submit sync reset";
+}
+
+/* ✅ importantísimo: permite que el contenido no rompa el grid */
+.top-actions-row > *{
+  min-width: 0;
+}
+
+/* asignación por "área" */
+#btnSubmitTop{ grid-area: submit; }
+#sync{ grid-area: sync; }
+#btnResetVotes{ grid-area: reset; }
+
+/* Mobile:
+   fila 1 => Hay votos + Vaciar votos
+   fila 2 => Enviar (full width, finito)
+*/
+@media (max-width: 900px){
+  .top-actions-row{
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-areas:
+      "sync reset"
+      "submit submit";
+  }
+
+  /* ✅ Mobile: botón azul más finito */
+  #btnSubmitTop{
+    min-height:36px;
+    padding:8px 12px;
+    border-radius:12px;
+  }
+
+  /* ✅ Mobile: que el texto del estado NO rompa el layout */
+  #sync{
+    white-space: nowrap !important;  /* ✅ fuerza a que no lo pise el #sync base */
+    text-align:center;
+  }
+
+  #sync .txt{
+    display:block;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    max-width:100%;
+  }
+}
+
+/* ===== Estado "Hay votos" con tamaño de botón (igual a Vaciar) ===== */
+#sync{
+  position: static;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+
+  width:100%;              /* ✅ ocupa su columna */
+  min-height: 42px;        /* ✅ misma altura percibida que button */
+  padding: 10px 12px;
+  border-radius: 12px;
+
+  font-weight: 900;
+  letter-spacing: .02em;
+
+  border: 1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.04);
+  color: var(--muted);
+
+  user-select:none;
+  white-space:nowrap;
+}
+
+#sync .dot{
+  width:9px;height:9px;border-radius:999px;background:var(--muted);
+}
+
+/* estados */
+#sync.ok{
+  border-color: rgba(46,160,67,.40);
+  background: rgba(46,160,67,.16);
+  color: #c8facc;
+}
+#sync.ok .dot{ background: var(--ok); }
+
+#sync.warn{
+  border-color: rgba(210,153,34,.40);
+  background: rgba(210,153,34,.16);
+  color: #ffe9c2;
+}
+#sync.warn .dot{ background: var(--warn); }
+
+#sync.err{
+  border-color: rgba(255,59,59,.40);
+  background: rgba(255,59,59,.16);
+  color: #ffd2d2;
+}
+#sync.err .dot{ background: var(--err); }
+
+#sync.saving{
+  border-color: rgba(62,166,255,.45);
+  background: rgba(62,166,255,.16);
+  color: #dbeafe;
+}
+#sync.saving .dot{
+  background: var(--accent);
+  animation: pulse 1s infinite;
+}
+
+/* Botón azul cuando está ARRIBA */
+#btnSubmitTop{
+  width:100%;
+  min-height:42px;          /* PC cómodo */
+
+  /* ✅ centrado perfecto */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}
+
+/* ✅ Top: que los 3 “bloques” ocupen el 100% de su celda siempre */
+#btnSubmitTop,
+#btnResetVotes{
+  width: 100%;
+  display:flex;
+  align-items:center;     /* ✅ FIX: centrado vertical */
+  justify-content:center; /* ✅ centrado horizontal */
+  line-height:1;          /* ✅ evita que “flote” el texto */
+}
+
+#sync{
+  width: 100%;
+}
+
+/* Mobile: alargadito y finito */
+@media (max-width: 900px){
+  #btnSubmitTop{
+    min-height:36px;        /* más finito */
+    padding:8px 12px;       /* menos alto */
+    border-radius:12px;
+  }
+}
+
+#sync .dot{
+  width: 9px;
+  height: 9px;
+  border-radius: 999px;
+  background: var(--muted);
+}
+
+/* estados */
+#sync.ok{
+  border-color: rgba(46,160,67,.40);
+  background: rgba(46,160,67,.16);
+  color: #c8facc;
+}
+#sync.ok .dot{ background: var(--ok); }
+
+#sync.warn{
+  border-color: rgba(210,153,34,.40);
+  background: rgba(210,153,34,.16);
+  color: #ffe9c2;
+}
+#sync.warn .dot{ background: var(--warn); }
+
+#sync.err{
+  border-color: rgba(255,59,59,.40);
+  background: rgba(255,59,59,.16);
+  color: #ffd2d2;
+}
+#sync.err .dot{ background: var(--err); }
+
+#sync.saving{
+  border-color: rgba(62,166,255,.45);
+  background: rgba(62,166,255,.16);
+  color: #dbeafe;
+}
+#sync.saving .dot{
+  background: var(--accent);
+  animation: pulse 1s infinite;
+}
+
+.title{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+}
+h1{margin:0;font-size:1.7rem}
+
+.roombar{
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:12px;
+  display:flex;
+  gap:12px;
+  flex-wrap:wrap;
+  align-items:end;
+}
+.field{display:flex;flex-direction:column;gap:6px;min-width:180px;flex:1}
+label{color:var(--muted);font-size:.85rem}
+input{
+  background:#0b0b0b;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:10px 10px;
+  color:var(--text);
+  outline:none;
+}
+input:focus{border-color:rgba(62,166,255,.6)}
+
+.grid{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap:14px;
+  grid-template-areas:
+    "results results"
+    "meals  podium"; /* ✅ invertido: comidas izquierda, podio derecha */
+}
+
+#resultsCard{ grid-area: results; }
+#podiumCard{ grid-area: podium; }
+#mealsCard{ grid-area: meals; }
+
+@media (max-width: 900px){
+  .grid{
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "results"
+      "podium"
+      "meals";
+  }
+
+  .meals{ grid-template-columns: 1fr; }
+}
+
+.card{
+  background:var(--surface);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:16px;
+  padding:14px;
+}
+.card.full{grid-column:1 / -1}
+
+h2{margin:0 0 10px 0;font-size:1.25rem}
+.muted{color:var(--muted)}
+.row{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+
+button{
+  background:#2a2a2a;
+  border:1px solid rgba(255,255,255,.06);
+  color:#fff;
+  padding:10px 12px;
+  border-radius:12px;
+  cursor:pointer;
+  transition:transform .05s ease, background .15s ease;
+
+  /* ✅ FIX: texto SIEMPRE centrado vertical/horizontal */
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+  font-size:1rem;
+}
+
+button:hover{background:#3a3a3a}
+button:active{transform:scale(.99)}
+button.primary{background:var(--accent); color:#000; border:none}
+button.primary:hover{background:#66baff}
+button.ghost{background:transparent}
+
+button.danger{
+  background: rgba(255,59,59,.12);
+  border: 1px solid rgba(255,59,59,.35);
+  color: #ffd2d2;
+}
+button.danger:hover{ background: rgba(255,59,59,.18); }
+
+.meals{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr)); /* ✅ 2 columnas en PC */
+  gap:10px;
+  /* ✅ NO scroll interno */
+}
+
+/* ===== Dentro de cada sección, 2 columnas con orden vertical ===== */
+.meals-two{
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.meals-col{
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* Mobile: una sola columna */
+@media (max-width: 900px){
+  .meals-two{
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ===== Secciones dentro de #meals ===== */
+.meals-section{
+  grid-column: 1 / -1; /* ocupa el ancho completo */
+  margin-top: 6px;
+  padding: 10px 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+  display:flex;
+  align-items:center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meals-section .ttl{
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  font-size: .9rem;
+}
+
+.meals-section .sub{
+  color: var(--muted);
+  font-size: .85rem;
+}
+
+/* colores de título como tu otra página */
+.meals-section.saludable{ border-color: rgba(46,160,67,.30); }
+.meals-section.saludable .ttl{ color:#c8facc; }
+
+.meals-section.antojo{ border-color: rgba(210,153,34,.30); }
+.meals-section.antojo .ttl{ color:#ffe9c2; }
+
+.meals-section.merienda{ border-color: rgba(62,166,255,.35); }
+.meals-section.merienda .ttl{ color:#dbeafe; }
+
+.meals-section.otro{ border-color: rgba(255,255,255,.14); }
+.meals-section.otro .ttl{ color:#ddd; }
+
+.meal{
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+
+/* ===== Colorcito tipo "comidas para siempre" en la lista de comidas ===== */
+.meal{
+  position: relative;
+  overflow: hidden;
+}
+
+/* barrita lateral */
+.meal::before{
+  content:"";
+  position:absolute;
+  left:0; top:0; bottom:0;
+  width:6px;
+  background: rgba(255,255,255,.06);
+}
+
+/* tints por tipo */
+.meal.t-saludable{
+  border-color: rgba(46,160,67,.22);
+  background: linear-gradient(90deg, rgba(46,160,67,.12), rgba(255,255,255,.02));
+}
+.meal.t-saludable::before{ background: rgba(46,160,67,.85); }
+
+.meal.t-antojo{
+  border-color: rgba(210,153,34,.22);
+  background: linear-gradient(90deg, rgba(210,153,34,.12), rgba(255,255,255,.02));
+}
+.meal.t-antojo::before{ background: rgba(210,153,34,.85); }
+
+.meal.t-merienda{
+  border-color: rgba(62,166,255,.22);
+  background: linear-gradient(90deg, rgba(62,166,255,.12), rgba(255,255,255,.02));
+}
+.meal.t-merienda::before{ background: rgba(62,166,255,.85); }
+
+.meal.t-otro{
+  border-color: rgba(255,255,255,.10);
+  background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
+}
+.meal.t-otro::before{ background: rgba(255,255,255,.22); }
+
+.meal input[type="checkbox"]{
+  transform:scale(1.2);
+  accent-color:var(--accent);
+}
+.meal .name{flex:1; font-size:.95rem}
+.meal .mini{color:var(--muted); font-size:.82rem}
+
+/* Tag de tipo */
+.tag{
+  display:inline-flex;
+  align-items:center;
+  padding:3px 10px;
+  border-radius:999px;
+  font-size:.78rem;
+  letter-spacing:.02em;
+  border:1px solid rgba(255,255,255,.08);
+}
+
+.tag.saludable{ color:#b8ffcc; border-color:rgba(46,160,67,.35); background:rgba(46,160,67,.12); }
+.tag.antojo{ color:#ffd7a6; border-color:rgba(210,153,34,.35); background:rgba(210,153,34,.12); }
+.tag.merienda{ color:#cfe3ff; border-color:rgba(62,166,255,.35); background:rgba(62,166,255,.10); }
+.tag.otro{ color:#ddd; border-color:rgba(255,255,255,.12); background:rgba(255,255,255,.06); }
+
+.podium{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-top:10px;
+}
+.pitem{
+  background:var(--surface2);
+  border:1px solid rgba(255,255,255,.05);
+  border-radius:14px;
+  padding:10px;
+  display:flex;
+  gap:10px;
+  align-items:center;
+}
+.pitem .rank{
+  width:34px; height:34px;
+  border-radius:12px;
+  background:#101010;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--muted);
+  border:1px solid rgba(255,255,255,.06);
+}
+.pitem .mealname{flex:1}
+.pitem .score{
+  width:92px;
+  text-align:right;
+}
+.pitem input{
+  width:92px;
+  text-align:center;
+}
+
+.actions{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap}
+
+.results{
+  background:#0b0b0b;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:12px;
+  min-height:120px;
+}
+
+.results .head{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  margin-bottom:10px;
+  flex-wrap:wrap;
+}
+
+.results .participants{
+  color: var(--muted);
+  font-size:.9rem;
+}
+
+.results .mode{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.10);
+  background:rgba(255,255,255,.04);
+  color: var(--muted);
+  font-size:.85rem;
+}
+
+.rlist{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+
+.rsection-title{
+  margin: 12px 0 6px 0;
+  font-weight:700;
+  color:#fff;
+}
+
+.ritem{
+  background: rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:14px;
+  padding:10px 12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* ===== Winner grande / resto compacto ===== */
+.winner-card{
+  margin: 12px 0 14px 0;
+  padding: 14px;
+  border-radius: 16px;
+  border: 1px solid rgba(62,166,255,.45);
+  background: rgba(62,166,255,.12);
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.winner-icon{
+  width:46px;
+  height:46px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(255,215,0,.14);
+  border: 1px solid rgba(255,215,0,.35);
+  font-size: 22px;
+}
+
+.winner-title{
+  color: var(--muted);
+  font-size: .85rem;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.winner-meal{
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.winner-right{
+  margin-left:auto;
+  text-align:right;
+}
+
+.winner-score{
+  font-size: 1.25rem;
+  font-weight: 900;
+}
+.winner-score-label{
+  color: var(--muted);
+  font-size: .8rem;
+}
+
+.ritem.compact{
+  padding: 8px 10px;
+  border-radius: 14px;
+}
+.ritem.compact .rname{
+  font-weight: 700;
+  font-size: .95rem;
+}
+.ritem.compact .rmeta{
+  font-size: .9rem;
+}
+
+.rank-badge{
+  width:38px;
+  height:38px;
+  border-radius:12px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  background: rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.08);
+  color: var(--muted);
+}
+
+.ritem.win{
+  border-color: rgba(62,166,255,.45);
+  background: rgba(62,166,255,.10);
+}
+
+.rname{
+  flex:1;
+  font-weight:700;
+}
+
+.rmeta{
+  color: var(--muted);
+  font-size:.88rem;
+}
+
+/* Desglose compacto debajo del nombre */
+.rbreak{
+  font-size: .82rem;
+  margin-top: 3px;
+  color: var(--muted);
+}
+
+/* oro/plata/bronce */
+.rank-badge.gold{ background: rgba(255,215,0,.12); border-color: rgba(255,215,0,.35); color: #ffe9a6; }
+.rank-badge.silver{ background: rgba(192,192,192,.12); border-color: rgba(192,192,192,.35); color: #e6e6e6; }
+.rank-badge.bronze{ background: rgba(205,127,50,.14); border-color: rgba(205,127,50,.35); color: #ffd1a6; }
+
+/* sync pill */
+.sync-pill{
+  display:inline-flex;align-items:center;gap:8px;
+  padding:8px 10px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.03);
+  color:var(--muted);
+  user-select:none;
+}
+.sync-pill .dot{width:9px;height:9px;border-radius:999px;background:var(--muted)}
+.sync-pill.ok{color:#c8facc;border-color:rgba(46,160,67,.35)}
+.sync-pill.ok .dot{background:var(--ok)}
+.sync-pill.saving{color:#dbeafe;border-color:rgba(62,166,255,.35)}
+.sync-pill.saving .dot{background:var(--accent); animation:pulse 1s infinite}
+.sync-pill.warn{color:#ffe9c2;border-color:rgba(210,153,34,.35)}
+.sync-pill.warn .dot{background:var(--warn)}
+.sync-pill.err{color:#ffd2d2;border-color:rgba(255,59,59,.35)}
+.sync-pill.err .dot{background:var(--err)}
+@keyframes pulse{0%{transform:scale(1);opacity:.6}50%{transform:scale(1.25);opacity:1}100%{transform:scale(1);opacity:.6}}
+
+#toast-root{
+  position:fixed; right:18px; bottom:18px;
+  display:flex; flex-direction:column; gap:10px;
+  z-index:9999; pointer-events:none;
+}
+.toast{
+  pointer-events:none;
+  background:rgba(25,25,25,.95);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:10px 12px;
+  min-width:220px; max-width:360px;
+  box-shadow:0 10px 35px rgba(0,0,0,.35);
+  animation:toastIn .15s ease-out;
+}
+.toast .small{color:var(--muted);font-size:.85rem;margin-top:4px}
+.toast.ok{border-color:rgba(46,160,67,.35)}
+.toast.warn{border-color:rgba(210,153,34,.35)}
+.toast.err{border-color:rgba(255,59,59,.35)}
+@keyframes toastIn{from{transform:translateY(10px);opacity:0}to{transform:translateY(0);opacity:1}}
+
+@media (max-width: 900px){
+  .grid{
+    grid-template-columns:1fr;
+  }
+
+  /* Mobile: 1 columna para comidas */
+  .meals{
+    grid-template-columns: 1fr;
+  }
+
+  /* Mobile: orden visual -> Resultado, Podio, Comidas */
+  #podiumCard{ order: 2; }
+  #mealsCard{ order: 3; }
+  #resultsCard{ order: 1; }
+}
+
+/* ===== tags de tipo (SALUDABLE / ANTOJO / MERIENDA) ===== */
+.tag{
+  font-size:.72rem;
+  font-weight:700;
+  letter-spacing:.08em;
+  padding:6px 10px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.08);
+  background:rgba(255,255,255,.04);
+  color:var(--muted);
+}
+
+.tag.saludable{
+  border-color:rgba(46,160,67,.35);
+  color:#c8facc;
+  background:rgba(46,160,67,.12);
+}
+
+.tag.antojo{
+  border-color:rgba(210,153,34,.35);
+  color:#ffe9c2;
+  background:rgba(210,153,34,.12);
+}
+
+.tag.merienda{
+  border-color:rgba(62,166,255,.35);
+  color:#dbeafe;
+  background:rgba(62,166,255,.12);
+}
+
+.tag.otro{
+  border-color:rgba(255,255,255,.12);
+  color:var(--muted);
+  background:rgba(255,255,255,.04);
+}
+
+/* ===== colorcito lateral por tipo en cada comida ===== */
+.meal.t-saludable { border-left: 4px solid rgba(46,160,67,.75); }
+.meal.t-antojo    { border-left: 4px solid rgba(210,153,34,.75); }
+.meal.t-merienda  { border-left: 4px solid rgba(62,166,255,.75); }
+.meal.t-otro      { border-left: 4px solid rgba(255,255,255,.18); }
+
+/* ✅ Botón en "Tu podio": full width + centrado (PC y mobile) */
+#btnSubmitPodium{
+  margin-top:12px;
+  width:100%;
+
+  /* ✅ centrado perfecto */
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  line-height:1;
+}

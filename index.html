@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>¿Qué comemos?</title>
+    <link rel="stylesheet" href="./css/estilos.css" />
+</head>
+
+<body>
+    <header class="top">
+        <div class="title">
+            <h1>¿Qué comemos?</h1>
+        </div>
+
+        <div class="roombar">
+            <div class="field">
+                <label>Tu nombre</label>
+                <input id="displayName" type="text" placeholder="ej: Mauri" />
+            </div>
+
+            <button id="btnSaveIdentity">Guardar</button>
+
+            <!-- TOP ACTIONS -->
+            <div class="top-actions">
+                <div class="top-actions-row">
+                    <!-- Botón principal ARRIBA -->
+                    <button id="btnSubmitTop" class="primary">Enviar votos y ver resultado</button>
+
+                    <!-- Estado (Hay votos / No hay votos) -->
+                    <div id="sync" class="warn" aria-live="polite">
+                        <span class="dot"></span>
+                        <span class="txt">Cargando…</span>
+                    </div>
+
+                    <!-- Vaciar votos -->
+                    <button id="btnResetVotes" class="danger">Vaciar votos</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+
+    <main class="grid">
+        <section class="card full" id="resultsCard">
+            <h2>Resultado</h2>
+            <div id="results" class="results muted">Todavía no hay resultado.</div>
+        </section>
+
+        <section class="card" id="podiumCard">
+            <h2>Tu podio</h2>
+            <p class="muted">Seleccioná comidas y poné puntaje (0–10, saltos de 0.5). Se ordena solo.</p>
+
+            <div id="podium" class="podium"></div>
+
+            <!-- Botón principal ABAJO (Tu podio) -->
+            <button id="btnSubmitPodium" class="primary">Enviar votos y ver resultado</button>
+
+        </section>
+
+        <section class="card" id="mealsCard">
+            <h2>Elegí comidas</h2>
+
+            <div class="row">
+                <input id="search" type="text" placeholder="Buscar…" />
+                <button id="btnReload" class="ghost">Recargar lista</button>
+            </div>
+
+            <div id="meals" class="meals"></div>
+        </section>
+    </main>
+
+    <div id="toast-root" aria-live="polite" aria-atomic="true"></div>
+    <script src="./js/scripts.js"></script>
+</body>
+
+</html>
