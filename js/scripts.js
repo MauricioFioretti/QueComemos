@@ -375,12 +375,15 @@ function renderPodium() {
 
     const inp = document.createElement("input");
 
-    // ✅ teclado numérico + decimales
-    inp.type = "number";
-    inp.min = "0";
-    inp.max = "10";
-    inp.step = "0.01";       // ✅ decimales libres
+    // ✅ PERMITIR coma o punto: usar text + inputMode decimal
+    inp.type = "text";
     inp.inputMode = "decimal";
+    inp.autocomplete = "off";
+    inp.spellcheck = false;
+
+    // ayuda al teclado + validación suave
+    inp.placeholder = "0–10";
+    inp.pattern = "[0-9]+([.,][0-9]+)?";
 
     inp.value = String(it.score);
 
@@ -396,6 +399,21 @@ function renderPodium() {
     });
 
     inp.addEventListener("change", () => {
+        // ✅ también validar cuando sale del campo (mejor UX)
+        inp.addEventListener("blur", () => {
+        const parsed = parseScore(inp.value);
+        if (parsed === null) {
+            toast("Puntaje inválido", "warn", "Usá 0–10 (ej: 8.3 o 7,25)");
+            inp.value = String(selected.get(it.meal) ?? it.score);
+            return;
+        }
+        touched.add(it.meal);
+        selected.set(it.meal, parsed);
+        persistState();
+        scheduleRenderPodium();
+        scheduleRenderMeals();
+        });
+
     const parsed = parseScore(inp.value);
     if (parsed === null) {
         toast("Puntaje inválido", "warn", "Usá 0–10 (ej: 8.3 o 7,25)");
@@ -494,15 +512,24 @@ async function submitOrShowResults() {
 }
 
 async function submitMyVotes() {
-  const displayName = (displayNameEl.value || "").trim() || identity.userId;
+  const displayName = (displayNameEl.value || "").trim();
+
+  // ✅ NO permitir enviar si no hay nombre
+  if (!displayName) {
+    toast("Falta tu nombre", "warn", "Escribí tu nombre arriba y tocá Guardar (opcional).");
+    displayNameEl.focus();
+    return;
+  }
 
   if (selected.size === 0) {
     toast("No hay votos", "warn", "Seleccioná al menos una comida");
     return;
   }
 
-  identity.displayName = displayName;
+  // userId siempre existe (para identificar al usuario), pero NO lo mostramos como nombre
   ensureUserId();
+
+  identity.displayName = displayName;
   persistIdentity();
 
   const votes = Array.from(selected.entries()).map(([meal, score]) => ({ meal, score }));
@@ -514,8 +541,8 @@ async function submitMyVotes() {
     toast("Votos enviados ✅", "ok", `Usuario: ${displayName}`);
 
     await Promise.all([
-    loadStatus(),
-    loadResults()
+      loadStatus(),
+      loadResults()
     ]);
 
   } catch (err) {
